@@ -1,8 +1,8 @@
-package com.vdurmont.semver4j
+package com.vdurmont.semver4k
 
-import com.vdurmont.semver4j.Tokenizer.tokenize
-import com.vdurmont.semver4j.Semver.SemverType
-import com.vdurmont.semver4j.Range.RangeOperator
+import com.vdurmont.semver4k.Tokenizer.tokenize
+import com.vdurmont.semver4k.Semver.SemverType
+import com.vdurmont.semver4k.Range.RangeOperator
 
 /**
  * A requirement will provide an easy way to check if a version is satisfying.

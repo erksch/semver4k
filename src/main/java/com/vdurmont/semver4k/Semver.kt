@@ -1,4 +1,4 @@
-package com.vdurmont.semver4j
+package com.vdurmont.semver4k
 
 import kotlin.jvm.JvmOverloads
 

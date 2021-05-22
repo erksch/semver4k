@@ -1,6 +1,6 @@
-package com.vdurmont.semver4j
+package com.vdurmont.semver4k
 
-import com.vdurmont.semver4j.Semver.SemverType
+import com.vdurmont.semver4k.Semver.SemverType
 import kotlin.jvm.JvmOverloads
 
 /**

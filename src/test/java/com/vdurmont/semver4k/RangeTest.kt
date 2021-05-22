@@ -1,6 +1,6 @@
-package com.vdurmont.semver4j
+package com.vdurmont.semver4k
 
-import com.vdurmont.semver4j.Range.RangeOperator
+import com.vdurmont.semver4k.Range.RangeOperator
 import org.junit.Assert
 import org.junit.Test
 import org.junit.runner.RunWith
