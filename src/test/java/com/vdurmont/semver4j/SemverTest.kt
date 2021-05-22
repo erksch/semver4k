@@ -364,9 +364,9 @@ class SemverTest {
             Assert.assertEquals(major, semver.major)
             Assert.assertEquals(minor, semver.minor)
             Assert.assertEquals(patch, semver.patch)
-            Assert.assertEquals(suffixTokens.size.toLong(), semver.suffixTokens.size.toLong())
+            Assert.assertEquals(suffixTokens.size.toLong(), semver.suffixTokens?.size?.toLong())
             for (i in suffixTokens.indices) {
-                Assert.assertEquals(suffixTokens[i], semver.suffixTokens[i])
+                Assert.assertEquals(suffixTokens[i], semver.suffixTokens?.get(i))
             }
             Assert.assertEquals(build, semver.build)
         }
