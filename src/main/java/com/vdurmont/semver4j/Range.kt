@@ -1,7 +1,5 @@
 package com.vdurmont.semver4j
 
-import java.util.Objects
-
 // TODO doc
 class Range(val version: Semver, val op: RangeOperator) {
     constructor(version: String?, op: RangeOperator) : this(Semver(version!!, Semver.SemverType.LOOSE), op) {}
@@ -30,7 +28,7 @@ class Range(val version: Semver, val op: RangeOperator) {
     }
 
     override fun hashCode(): Int {
-        return Objects.hash(version, op)
+        return "$version${op.asString()}".hashCode()
     }
 
     override fun toString(): String {
