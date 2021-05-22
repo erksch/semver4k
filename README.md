@@ -1,10 +1,10 @@
-# Semver4j
+# Semver4k
 
 [![Build Status](https://travis-ci.org/vdurmont/semver4j.svg?branch=master)](https://travis-ci.org/vdurmont/semver4j)
 [![Coverage Status](https://coveralls.io/repos/vdurmont/semver4j/badge.svg?branch=master&service=github)](https://coveralls.io/github/vdurmont/semver4j?branch=master)
 [![License Info](http://img.shields.io/badge/license-The%20MIT%20License-brightgreen.svg)](https://github.com/vdurmont/semver4j/blob/master/LICENSE.md)
 
-**Semver4j** is a lightweight Java library that helps you handling versions. It follows the rules of the [semantic versioning](http://semver.org) specification and provides several versioning modes: strict, NPM, CocoaPods...
+**Semver4k** is a lightweight Java library that helps you handling versions. It follows the rules of the [semantic versioning](http://semver.org) specification and provides several versioning modes: strict, NPM, CocoaPods...
 
 ## Installation
 
@@ -15,7 +15,7 @@ Add the dependency to your project:
 ```xml
 <dependency>
   <groupId>com.vdurmont</groupId>
-  <artifactId>semver4j</artifactId>
+  <artifactId>semver4k</artifactId>
   <version>3.1.0</version>
 </dependency>
 ```

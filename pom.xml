@@ -3,18 +3,18 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.vdurmont</groupId>
-    <artifactId>semver4j</artifactId>
+    <artifactId>semver4k</artifactId>
     <version>3.1.0</version>
     <packaging>jar</packaging>
 
-    <name>semver4j</name>
-    <url>https://github.com/vdurmont/semver4j</url>
+    <name>semver4k</name>
+    <url>https://github.com/erksch/semver4k</url>
     <description>Semantic versioning for Java apps.</description>
 
     <scm>
-        <connection>scm:git:git@github.com:vdurmont/semver4j.git</connection>
-        <developerConnection>scm:git:git@github.com:vdurmont/semver4j.git</developerConnection>
-        <url>git@github.com:vdurmont/semver4j.git</url>
+        <connection>scm:git:git@github.com:erksch/semver4k.git</connection>
+        <developerConnection>scm:git:git@github.com:erksch/semver4k.git</developerConnection>
+        <url>git@github.com:erksch/semver4k.git</url>
     </scm>
 
     <developers>
