@@ -207,7 +207,7 @@ public class Requirement {
         List<Token> result = new ArrayList<Token>();
         result.add(new Token(TokenType.OPENING, "("));
         for (Token token : tokens) {
-            if (token.type == TokenType.OR) {
+            if (token.getType() == TokenType.OR) {
                 result.add(new Token(TokenType.CLOSING, ")"));
                 result.add(token);
                 result.add(new Token(TokenType.OPENING, "("));
@@ -235,7 +235,7 @@ public class Requirement {
         for (int i = 0; i < tokens.size(); i++) {
             Token token = tokens.get(i);
             if (thereIsFalsePositiveVersionRange(tokens, i)) {
-                token = new Token(TokenType.VERSION, token.value + '-' + tokens.get(i + 2).value);
+                token = new Token(TokenType.VERSION, token.getValue() + '-' + tokens.get(i + 2).getValue());
                 i += 2;
             }
             result.add(token);
@@ -248,16 +248,16 @@ public class Requirement {
             return false;
         }
         Token[] suspiciousTokens = new Token[] { tokens.get(i), tokens.get(i + 1), tokens.get(i + 2), };
-        if (!suspiciousTokens[0].type.equals(TokenType.VERSION)) {
+        if (!suspiciousTokens[0].getType().equals(TokenType.VERSION)) {
             return false;
         }
-        if (!suspiciousTokens[2].type.equals(TokenType.VERSION)) {
+        if (!suspiciousTokens[2].getType().equals(TokenType.VERSION)) {
             return false;
         }
-        if (!suspiciousTokens[1].type.equals(TokenType.HYPHEN)) {
+        if (!suspiciousTokens[1].getType().equals(TokenType.HYPHEN)) {
             return false;
         }
-        return attemptToParse(suspiciousTokens[2].value) == null;
+        return attemptToParse(suspiciousTokens[2].getValue()) == null;
     }
 
     private static Semver attemptToParse(String value) {
@@ -278,21 +278,21 @@ public class Requirement {
 
         for (int i = 0; i < tokens.size(); i++) {
             Tokenizer.Token token = tokens.get(i);
-            switch (token.type) {
+            switch (token.getType()) {
                 case VERSION:
                     queue.push(token);
                     break;
                 case CLOSING:
-                    while (stack.peek().type != Tokenizer.TokenType.OPENING) {
+                    while (stack.peek().getType() != Tokenizer.TokenType.OPENING) {
                         queue.push(stack.pop());
                     }
                     stack.pop();
-                    if (stack.size() > 0 && stack.peek().type.isUnary()) {
+                    if (stack.size() > 0 && stack.peek().getType().isUnary()) {
                         queue.push(stack.pop());
                     }
                     break;
                 default:
-                    if (token.type.isUnary()) {
+                    if (token.getType().isUnary()) {
                         // Push the operand first
                         i++;
                         queue.push(tokens.get(i));
@@ -319,12 +319,12 @@ public class Requirement {
         try {
             Tokenizer.Token token = iterator.next();
 
-            if (token.type == Tokenizer.TokenType.VERSION) {
-                if ("*".equals(token.value) || (type == Semver.SemverType.NPM && "latest".equals(token.value))) {
+            if (token.getType() == Tokenizer.TokenType.VERSION) {
+                if ("*".equals(token.getValue()) || (type == Semver.SemverType.NPM && "latest".equals(token.getValue()))) {
                     // Special case for "*" and "latest" in NPM
                     return new Requirement(new Range("0.0.0", Range.RangeOperator.GTE), null, null, null);
                 }
-                Semver version = new Semver(token.value, type);
+                Semver version = new Semver(token.getValue(), type);
                 if (version.getMinor() != null && version.getPatch() != null) {
                     Range range = new Range(version, Range.RangeOperator.EQ);
                     return new Requirement(range, null, null, null);
@@ -332,15 +332,15 @@ public class Requirement {
                     // If we have a version with a wildcard char (like 1.2.x, 1.2.* or 1.2), we need a tilde requirement
                     return tildeRequirement(version.getValue(), type);
                 }
-            } else if (token.type == Tokenizer.TokenType.HYPHEN) {
+            } else if (token.getType() == Tokenizer.TokenType.HYPHEN) {
                 Tokenizer.Token token3 = iterator.next(); // Note that token3 is before token2!
                 Tokenizer.Token token2 = iterator.next();
-                return hyphenRequirement(token2.value, token3.value, type);
-            } else if (token.type.isUnary()) {
+                return hyphenRequirement(token2.getValue(), token3.getValue(), type);
+            } else if (token.getType().isUnary()) {
                 Tokenizer.Token token2 = iterator.next();
 
                 Range.RangeOperator rangeOp;
-                switch (token.type) {
+                switch (token.getType()) {
                     case EQ:
                         rangeOp = Range.RangeOperator.EQ;
                         break;
@@ -357,14 +357,14 @@ public class Requirement {
                         rangeOp = Range.RangeOperator.GTE;
                         break;
                     case TILDE:
-                        return tildeRequirement(token2.value, type);
+                        return tildeRequirement(token2.getValue(), type);
                     case CARET:
-                        return caretRequirement(token2.value, type);
+                        return caretRequirement(token2.getValue(), type);
                     default:
                         throw new SemverException("Invalid requirement");
                 }
 
-                Range range = new Range(token2.value, rangeOp);
+                Range range = new Range(token2.getValue(), rangeOp);
                 return new Requirement(range, null, null, null);
             } else {
                 // They don't call it "reverse" for nothing
@@ -372,7 +372,7 @@ public class Requirement {
                 Requirement req1 = evaluateReversePolishNotation(iterator, type);
 
                 RequirementOperator requirementOp;
-                switch (token.type) {
+                switch (token.getType()) {
                     case OR:
                         requirementOp = RequirementOperator.OR;
                         break;
