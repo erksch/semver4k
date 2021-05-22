@@ -3,9 +3,11 @@ package com.vdurmont.semver4j
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
 import com.vdurmont.semver4j.Semver.SemverType
+import io.mockk.every
+import io.mockk.mockk
+import io.mockk.verify
 import org.junit.Assert
 import org.junit.Test
-import org.mockito.Mockito
 
 @RunWith(JUnit4::class)
 class SemverTest {
@@ -174,10 +176,11 @@ class SemverTest {
 
     @Test
     fun statisfies_calls_the_requirement() {
-        val req = Mockito.mock(Requirement::class.java)
         val semver = Semver("1.2.2")
+        val req = mockk<Requirement>()
+        every { req.isSatisfiedBy(semver) } returns true
         semver.satisfies(req)
-        Mockito.verify(req).isSatisfiedBy(semver)
+        verify { req.isSatisfiedBy(semver) }
     }
 
     @Test

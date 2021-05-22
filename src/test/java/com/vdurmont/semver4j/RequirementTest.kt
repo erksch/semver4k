@@ -2,9 +2,9 @@ package com.vdurmont.semver4j
 
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
-import org.mockito.Mockito
 import com.vdurmont.semver4j.Range.RangeOperator
 import com.vdurmont.semver4j.Semver.SemverType
+import io.mockk.*
 import org.junit.Assert
 import org.junit.Test
 
@@ -357,59 +357,66 @@ class RequirementTest {
 
     @Test
     fun isSatisfiedBy_with_a_range() {
-        val range = Mockito.mock(Range::class.java)
-        val requirement = Requirement(range, null, null, null)
+        val range = mockk<Range>()
         val version = Semver("1.2.3")
+        every { range.isSatisfiedBy(version) } returns true
+        val requirement = Requirement(range, null, null, null)
         requirement.isSatisfiedBy(version)
-        Mockito.verify(range).isSatisfiedBy(version)
+        verify { range.isSatisfiedBy(version) }
     }
 
     @Test
     fun isSatisfiedBy_with_subRequirements_AND_first_is_true() {
         val version = Semver("1.2.3")
-        val req1 = Mockito.mock(Requirement::class.java)
-        Mockito.`when`(req1.isSatisfiedBy(version)).thenReturn(true)
-        val req2 = Mockito.mock(Requirement::class.java)
+        val req1 = mockk<Requirement>()
+        every { req1.isSatisfiedBy(version) } returns true
+        val req2 = mockk<Requirement>()
+        every { req2.isSatisfiedBy(version) } returns true
         val requirement = Requirement(null, req1, Requirement.RequirementOperator.AND, req2)
         requirement.isSatisfiedBy(version)
-        Mockito.verify(req1).isSatisfiedBy(version)
-        Mockito.verify(req2).isSatisfiedBy(version)
+        verify { req1.isSatisfiedBy(version) }
+        verify { req2.isSatisfiedBy(version) }
     }
 
     @Test
     fun isSatisfiedBy_with_subRequirements_AND_first_is_false() {
         val version = Semver("1.2.3")
-        val req1 = Mockito.mock(Requirement::class.java)
-        Mockito.`when`(req1.isSatisfiedBy(version)).thenReturn(false)
-        val req2 = Mockito.mock(Requirement::class.java)
+        val req1 = mockk<Requirement>()
+        every { req1.isSatisfiedBy(version) } returns false
+        val req2 = mockk<Requirement>()
+        every { req2.isSatisfiedBy(version) } returns true
         val requirement = Requirement(null, req1, Requirement.RequirementOperator.AND, req2)
         requirement.isSatisfiedBy(version)
-        Mockito.verify(req1).isSatisfiedBy(version)
-        Mockito.verifyZeroInteractions(req2)
+        verify { req1.isSatisfiedBy(version) }
+        verify { req2 wasNot Called }
     }
 
     @Test
     fun isSatisfiedBy_with_subRequirements_OR_first_is_true() {
         val version = Semver("1.2.3")
-        val req1 = Mockito.mock(Requirement::class.java)
-        Mockito.`when`(req1.isSatisfiedBy(version)).thenReturn(true)
-        val req2 = Mockito.mock(Requirement::class.java)
+        val req1 = mockk<Requirement>()
+        every { req1.isSatisfiedBy(version) } returns true
+        val req2 = mockk<Requirement>()
+        every { req2.isSatisfiedBy(version) } returns true
         val requirement = Requirement(null, req1, Requirement.RequirementOperator.OR, req2)
         requirement.isSatisfiedBy(version)
-        Mockito.verify(req1).isSatisfiedBy(version)
-        Mockito.verifyZeroInteractions(req2)
+        verify { req1.isSatisfiedBy(version) }
+        verify { req2 wasNot Called }
     }
 
     @Test
     fun isSatisfiedBy_with_subRequirements_OR_first_is_false() {
         val version = Semver("1.2.3")
-        val req1 = Mockito.mock(Requirement::class.java)
-        Mockito.`when`(req1.isSatisfiedBy(version)).thenReturn(false)
-        val req2 = Mockito.mock(Requirement::class.java)
+        val req1 = mockk<Requirement>()
+        every { req1.isSatisfiedBy(version) } returns false
+        val req2 = mockk<Requirement>()
+        every { req2.isSatisfiedBy(version) } returns true
         val requirement = Requirement(null, req1, Requirement.RequirementOperator.OR, req2)
         requirement.isSatisfiedBy(version)
-        Mockito.verify(req1).isSatisfiedBy(version)
-        Mockito.verify(req2).isSatisfiedBy(version)
+        verifyAll {
+            req1.isSatisfiedBy(version)
+            req2.isSatisfiedBy(version)
+        }
     }
 
     @Test

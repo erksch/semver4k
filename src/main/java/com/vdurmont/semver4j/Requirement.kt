@@ -43,52 +43,47 @@ class Requirement
      * @return true if the version satisfies the requirement
      */
     fun isSatisfiedBy(version: Semver): Boolean {
-        return if (range != null) {
-            // We are on a leaf
-            range.isSatisfiedBy(version)
-        } else {
-            // We have several sub-requirements
-            when (op) {
-                RequirementOperator.AND -> {
-                    return try {
-                        val set = getAllRanges(this, ArrayList())
-                        for (range in set) {
-                            if (!range!!.isSatisfiedBy(version)) {
-                                return false
-                            }
-                        }
-                        if (version.suffixTokens?.isNotEmpty() == true) {
-                            // Find the set of versions that are allowed to have prereleases
-                            // For example, ^1.2.3-pr.1 desugars to >=1.2.3-pr.1 <2.0.0
-                            // That should allow `1.2.3-pr.2` to pass.
-                            // However, `1.2.4-alpha.notready` should NOT be allowed,
-                            // even though it's within the range set by the comparators.
-                            for (range in set) {
-                                if (range!!.version == null) {
-                                    continue
-                                }
-                                if (range.version.suffixTokens?.isNotEmpty() == true) {
-                                    val allowed = range.version
-                                    if (version.major == allowed.major &&
-                                            version.minor == allowed.minor &&
-                                            version.patch == allowed.patch) {
-                                        return true
-                                    }
-                                }
-                            }
-                            // Version has a -pre, but it's not one of the ones we like.
-                            return false
-                        }
-                        true
-                    } catch (e: Exception) {
-                        // Could be that we have a OR in AND - fallback to default test
-                        req1!!.isSatisfiedBy(version) && req2!!.isSatisfiedBy(version)
+        if (range != null) {
+            return range.isSatisfiedBy(version)
+        }
+
+        when (op) {
+            RequirementOperator.AND -> try {
+                val set = getAllRanges(this, ArrayList())
+                for (range in set) {
+                    if (!range!!.isSatisfiedBy(version)) {
+                        return false
                     }
-                    return req1!!.isSatisfiedBy(version) || req2!!.isSatisfiedBy(version)
                 }
-                RequirementOperator.OR -> return req1!!.isSatisfiedBy(version) || req2!!.isSatisfiedBy(version)
+                if (version.suffixTokens?.isNotEmpty() == true) {
+                    // Find the set of versions that are allowed to have prereleases
+                    // For example, ^1.2.3-pr.1 desugars to >=1.2.3-pr.1 <2.0.0
+                    // That should allow `1.2.3-pr.2` to pass.
+                    // However, `1.2.4-alpha.notready` should NOT be allowed,
+                    // even though it's within the range set by the comparators.
+                    for (range in set) {
+                        if (range!!.version == null) {
+                            continue
+                        }
+                        if (range.version.suffixTokens?.isNotEmpty() == true) {
+                            val allowed = range.version
+                            if (version.major == allowed.major &&
+                                    version.minor == allowed.minor &&
+                                    version.patch == allowed.patch) {
+                                return true
+                            }
+                        }
+                    }
+                    // Version has a -pre, but it's not one of the ones we like.
+                    return false
+                }
+                return true
+            } catch (e: Exception) {
+                // Could be that we have a OR in AND - fallback to default test
+                return req1!!.isSatisfiedBy(version) && req2!!.isSatisfiedBy(version)
             }
-            throw RuntimeException("Code error. Unknown RequirementOperator: " + op) // Should never happen
+            RequirementOperator.OR -> return req1!!.isSatisfiedBy(version) || req2!!.isSatisfiedBy(version)
+            else -> throw RuntimeException("Code error. Unknown RequirementOperator: " + op) // Should never happen
         }
     }
 
