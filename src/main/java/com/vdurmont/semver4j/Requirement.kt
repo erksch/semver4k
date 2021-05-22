@@ -1,11 +1,8 @@
 package com.vdurmont.semver4j
 
 import com.vdurmont.semver4j.Tokenizer.tokenize
-import java.lang.RuntimeException
 import com.vdurmont.semver4j.Semver.SemverType
 import com.vdurmont.semver4j.Range.RangeOperator
-import java.lang.Exception
-import java.lang.StringBuilder
 import java.util.*
 import java.util.regex.Pattern
 

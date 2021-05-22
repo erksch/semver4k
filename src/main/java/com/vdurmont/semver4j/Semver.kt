@@ -1,9 +1,6 @@
 package com.vdurmont.semver4j
 
 import kotlin.jvm.JvmOverloads
-import java.lang.NumberFormatException
-import java.lang.StringBuilder
-import java.lang.IndexOutOfBoundsException
 
 /**
  * Semver is a tool that provides useful methods to manipulate versions that follow the "semantic versioning" specification

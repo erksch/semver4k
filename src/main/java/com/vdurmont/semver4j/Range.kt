@@ -1,6 +1,5 @@
 package com.vdurmont.semver4j
 
-import java.lang.RuntimeException
 import java.util.Objects
 
 // TODO doc
@@ -18,8 +17,8 @@ class Range(val version: Semver, val op: RangeOperator) {
             RangeOperator.LTE -> version.isLowerThan(this.version) || version.isEquivalentTo(this.version)
             RangeOperator.GT -> version.isGreaterThan(this.version)
             RangeOperator.GTE -> version.isGreaterThan(this.version) || version.isEquivalentTo(this.version)
+            else -> throw RuntimeException("Code error. Unknown RangeOperator: " + op) // Should never happen
         }
-        throw RuntimeException("Code error. Unknown RangeOperator: " + op) // Should never happen
     }
 
     override fun equals(o: Any?): Boolean {
