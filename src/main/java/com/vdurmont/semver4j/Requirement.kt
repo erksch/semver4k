@@ -4,7 +4,6 @@ import com.vdurmont.semver4j.Tokenizer.tokenize
 import com.vdurmont.semver4j.Semver.SemverType
 import com.vdurmont.semver4j.Range.RangeOperator
 import java.util.*
-import java.util.regex.Pattern
 
 /**
  * A requirement will provide an easy way to check if a version is satisfying.
@@ -137,22 +136,22 @@ class Requirement
     }
 
     companion object {
-        private val IVY_DYNAMIC_PATCH_PATTERN = Pattern.compile("(\\d+)\\.(\\d+)\\.\\+")
-        private val IVY_DYNAMIC_MINOR_PATTERN = Pattern.compile("(\\d+)\\.\\+")
-        private val IVY_LATEST_PATTERN = Pattern.compile("latest\\.\\w+")
-        private val IVY_MATH_BOUNDED_PATTERN = Pattern.compile(
+        private val IVY_DYNAMIC_PATCH_PATTERN = Regex("(\\d+)\\.(\\d+)\\.\\+")
+        private val IVY_DYNAMIC_MINOR_PATTERN = Regex("(\\d+)\\.\\+")
+        private val IVY_LATEST_PATTERN = Regex("latest\\.\\w+")
+        private val IVY_MATH_BOUNDED_PATTERN = Regex(
                 "(\\[|\\])" +  // 1ST GROUP: a square bracket
                         "([\\d\\.]+)" +  // 2ND GROUP: a version
                         "," +  // a comma separator
                         "([\\d\\.]+)" +  // 3RD GROUP: a version
                         "(\\[|\\])" // 4TH GROUP: a square bracket
         )
-        private val IVY_MATH_LOWER_UNBOUNDED_PATTERN = Pattern.compile(
+        private val IVY_MATH_LOWER_UNBOUNDED_PATTERN = Regex(
                 "\\(," +  // a parenthesis and a comma separator
                         "([\\d\\.]+)" +  // 1ST GROUP: a version
                         "(\\[|\\])" // 2ND GROUP: a square bracket
         )
-        private val IVY_MATH_UPPER_UNBOUNDED_PATTERN = Pattern.compile(
+        private val IVY_MATH_UPPER_UNBOUNDED_PATTERN = Regex(
                 "(\\[|\\])" +  // 1ST GROUP: a square bracket
                         "([\\d\\.]+)" +  // 2ND GROUP: a version
                         ",\\)" // a comma separator and a parenthesis
@@ -237,50 +236,50 @@ class Requirement
          *
          * @return the generated requirement
          */
-        fun buildIvy(requirement: String?): Requirement {
+        fun buildIvy(requirement: String): Requirement {
             try {
                 return buildLoose(requirement)
             } catch (ignored: SemverException) {
             }
-            var matcher = IVY_DYNAMIC_PATCH_PATTERN.matcher(requirement)
-            if (matcher.find()) {
-                val major = Integer.valueOf(matcher.group(1))
-                val minor = Integer.valueOf(matcher.group(2))
+            val matchPath = IVY_DYNAMIC_PATCH_PATTERN.find(requirement)
+            if (matchPath != null) {
+                val major = Integer.valueOf(matchPath.groupValues[1])
+                val minor = Integer.valueOf(matchPath.groupValues[2])
                 val lower = Requirement(Range("$major.$minor.0", RangeOperator.GTE), null, null, null)
                 val upper = Requirement(Range(major.toString() + "." + (minor + 1) + ".0", RangeOperator.LT), null, null, null)
                 return Requirement(null, lower, RequirementOperator.AND, upper)
             }
-            matcher = IVY_DYNAMIC_MINOR_PATTERN.matcher(requirement)
-            if (matcher.find()) {
-                val major = Integer.valueOf(matcher.group(1))
+            val matchMinor = IVY_DYNAMIC_MINOR_PATTERN.find(requirement)
+            if (matchMinor != null) {
+                val major = Integer.valueOf(matchMinor.groupValues[1])
                 val lower = Requirement(Range("$major.0.0", RangeOperator.GTE), null, null, null)
                 val upper = Requirement(Range((major + 1).toString() + ".0.0", RangeOperator.LT), null, null, null)
                 return Requirement(null, lower, RequirementOperator.AND, upper)
             }
-            matcher = IVY_LATEST_PATTERN.matcher(requirement)
-            if (matcher.find()) {
+            val matchLatest = IVY_LATEST_PATTERN.find(requirement)
+            if (matchLatest != null) {
                 return Requirement(Range("0.0.0", RangeOperator.GTE), null, null, null)
             }
-            matcher = IVY_MATH_BOUNDED_PATTERN.matcher(requirement)
-            if (matcher.find()) {
-                val lowerOp = if ("[" == matcher.group(1)) RangeOperator.GTE else RangeOperator.GT
-                val lowerVersion = Semver(matcher.group(2), SemverType.LOOSE)
-                val upperVersion = Semver(matcher.group(3), SemverType.LOOSE)
-                val upperOp = if ("]" == matcher.group(4)) RangeOperator.LTE else RangeOperator.LT
+            val matchBounded = IVY_MATH_BOUNDED_PATTERN.find(requirement)
+            if (matchBounded != null) {
+                val lowerOp = if ("[" == matchBounded.groupValues[1]) RangeOperator.GTE else RangeOperator.GT
+                val lowerVersion = Semver(matchBounded.groupValues[2], SemverType.LOOSE)
+                val upperVersion = Semver(matchBounded.groupValues[3], SemverType.LOOSE)
+                val upperOp = if ("]" == matchBounded.groupValues[4]) RangeOperator.LTE else RangeOperator.LT
                 val lower = Requirement(Range(extrapolateVersion(lowerVersion), lowerOp), null, null, null)
                 val upper = Requirement(Range(extrapolateVersion(upperVersion), upperOp), null, null, null)
                 return Requirement(null, lower, RequirementOperator.AND, upper)
             }
-            matcher = IVY_MATH_LOWER_UNBOUNDED_PATTERN.matcher(requirement)
-            if (matcher.find()) {
-                val version = Semver(matcher.group(1), SemverType.LOOSE)
-                val op = if ("]" == matcher.group(2)) RangeOperator.LTE else RangeOperator.LT
+            val matchLowerUnbounded = IVY_MATH_LOWER_UNBOUNDED_PATTERN.find(requirement)
+            if (matchLowerUnbounded != null) {
+                val version = Semver(matchLowerUnbounded.groupValues[1], SemverType.LOOSE)
+                val op = if ("]" == matchLowerUnbounded.groupValues[2]) RangeOperator.LTE else RangeOperator.LT
                 return Requirement(Range(extrapolateVersion(version), op), null, null, null)
             }
-            matcher = IVY_MATH_UPPER_UNBOUNDED_PATTERN.matcher(requirement)
-            if (matcher.find()) {
-                val op = if ("[" == matcher.group(1)) RangeOperator.GTE else RangeOperator.GT
-                val version = Semver(matcher.group(2), SemverType.LOOSE)
+            val matchUpperUnbounded = IVY_MATH_UPPER_UNBOUNDED_PATTERN.find(requirement)
+            if (matchUpperUnbounded != null) {
+                val op = if ("[" == matchUpperUnbounded.groupValues[1]) RangeOperator.GTE else RangeOperator.GT
+                val version = Semver(matchUpperUnbounded.groupValues[2], SemverType.LOOSE)
                 return Requirement(Range(extrapolateVersion(version), op), null, null, null)
             }
             throw SemverException("Invalid requirement")
