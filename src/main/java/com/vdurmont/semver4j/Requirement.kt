@@ -3,7 +3,6 @@ package com.vdurmont.semver4j
 import com.vdurmont.semver4j.Tokenizer.tokenize
 import com.vdurmont.semver4j.Semver.SemverType
 import com.vdurmont.semver4j.Range.RangeOperator
-import java.util.*
 
 /**
  * A requirement will provide an easy way to check if a version is satisfying.
@@ -115,7 +114,7 @@ class Requirement
     }
 
     override fun hashCode(): Int {
-        return Objects.hash(range, req1, op, req2)
+        return "$range$req1$op$req2".hashCode()
     }
 
     override fun toString(): String {
@@ -363,36 +362,36 @@ class Requirement
          * Adaptation of the shutting yard algorithm
          */
         private fun toReversePolishNotation(tokens: List<Tokenizer.Token?>): List<Tokenizer.Token?> {
-            val queue = LinkedList<Tokenizer.Token?>()
-            val stack = Stack<Tokenizer.Token?>()
+            val queue = mutableListOf<Tokenizer.Token?>()
+            val stack = mutableListOf<Tokenizer.Token?>()
             var i = 0
             while (i < tokens.size) {
                 val token = tokens[i]
                 when (token!!.type) {
-                    Tokenizer.TokenType.VERSION -> queue.push(token)
+                    Tokenizer.TokenType.VERSION -> queue.add(0, token)
                     Tokenizer.TokenType.CLOSING -> {
-                        while (stack.peek()!!.type !== Tokenizer.TokenType.OPENING) {
-                            queue.push(stack.pop())
+                        while (stack[0]!!.type !== Tokenizer.TokenType.OPENING) {
+                            queue.add(0, stack.removeAt(0))
                         }
-                        stack.pop()
-                        if (stack.size > 0 && stack.peek()!!.type.isUnary) {
-                            queue.push(stack.pop())
+                        stack.removeAt(0)
+                        if (stack.size > 0 && stack[0]!!.type.isUnary) {
+                            queue.add(0, stack.removeAt(0))
                         }
                     }
                     else -> if (token.type.isUnary) {
                         // Push the operand first
                         i++
-                        queue.push(tokens[i])
+                        queue.add(0, tokens[i])
                         // Then the operator
-                        queue.push(token)
+                        queue.add(0, token)
                     } else {
-                        stack.push(token)
+                        stack.add(0, token)
                     }
                 }
                 i++
             }
-            while (!stack.isEmpty()) {
-                queue.push(stack.pop())
+            while (stack.isNotEmpty()) {
+                queue.add(0, stack.removeAt(0))
             }
             return queue
         }
