@@ -184,7 +184,7 @@ class Semver @JvmOverloads constructor(val originalValue: String, val type: Semv
      *
      * @return true if the version satisfies the requirement
      */
-    fun satisfies(requirement: String?): Boolean {
+    fun satisfies(requirement: String): Boolean {
         val req: Requirement = when (type) {
             SemverType.STRICT -> Requirement.buildStrict(requirement)
             SemverType.LOOSE -> Requirement.buildLoose(requirement)

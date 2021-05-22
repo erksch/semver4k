@@ -55,11 +55,11 @@ class RequirementTest {
         Assert.assertNull(req.range)
         Assert.assertEquals(Requirement.RequirementOperator.OR, req.op)
         val req1 = req.req1
-        Assert.assertEquals(RangeOperator.GTE, req1.range.op)
-        Assert.assertEquals("1.2.3", req1.range.version.value)
+        Assert.assertEquals(RangeOperator.GTE, req1?.range?.op)
+        Assert.assertEquals("1.2.3", req1?.range?.version?.value)
         val req2 = req.req2
-        Assert.assertEquals(RangeOperator.GT, req2.range.op)
-        Assert.assertEquals("4.5.6", req2.range.version.value)
+        Assert.assertEquals(RangeOperator.GT, req2?.range?.op)
+        Assert.assertEquals("4.5.6", req2?.range?.version?.value)
     }
 
     @Test
@@ -70,29 +70,29 @@ class RequirementTest {
 
         // >1.2.1 <1.2.8
         val req1 = req.req1
-        Assert.assertNull(req1.range)
-        Assert.assertEquals(Requirement.RequirementOperator.AND, req1.op)
-        val req1_1 = req1.req1
-        Assert.assertNull(req1_1.op)
-        Assert.assertEquals(RangeOperator.GT, req1_1.range.op)
-        Assert.assertEquals("1.2.1", req1_1.range.version.value)
-        val req1_2 = req1.req2
-        Assert.assertNull(req1_2.op)
-        Assert.assertEquals(RangeOperator.LT, req1_2.range.op)
-        Assert.assertEquals("1.2.8", req1_2.range.version.value)
+        Assert.assertNull(req1?.range)
+        Assert.assertEquals(Requirement.RequirementOperator.AND, req1?.op)
+        val req1_1 = req1?.req1
+        Assert.assertNull(req1_1?.op)
+        Assert.assertEquals(RangeOperator.GT, req1_1?.range?.op)
+        Assert.assertEquals("1.2.1", req1_1?.range?.version?.value)
+        val req1_2 = req1?.req2
+        Assert.assertNull(req1_2?.op)
+        Assert.assertEquals(RangeOperator.LT, req1_2?.range?.op)
+        Assert.assertEquals("1.2.8", req1_2?.range?.version?.value)
 
         // >2.0.0 < 3.0.0
         val req2 = req.req2
-        Assert.assertNull(req2.range)
-        Assert.assertEquals(Requirement.RequirementOperator.AND, req2.op)
-        val req2_1 = req2.req1
-        Assert.assertNull(req2_1.op)
-        Assert.assertEquals(RangeOperator.GT, req2_1.range.op)
-        Assert.assertEquals("2.0.0", req2_1.range.version.value)
-        val req2_2 = req2.req2
-        Assert.assertNull(req2_2.op)
-        Assert.assertEquals(RangeOperator.LT, req2_2.range.op)
-        Assert.assertEquals("3.0.0", req2_2.range.version.value)
+        Assert.assertNull(req2?.range)
+        Assert.assertEquals(Requirement.RequirementOperator.AND, req2?.op)
+        val req2_1 = req2?.req1
+        Assert.assertNull(req2_1?.op)
+        Assert.assertEquals(RangeOperator.GT, req2_1?.range?.op)
+        Assert.assertEquals("2.0.0", req2_1?.range?.version?.value)
+        val req2_2 = req2?.req2
+        Assert.assertNull(req2_2?.op)
+        Assert.assertEquals(RangeOperator.LT, req2_2?.range?.op)
+        Assert.assertEquals("3.0.0", req2_2?.range?.version?.value)
     }
 
     @Test
@@ -270,8 +270,8 @@ class RequirementTest {
         Assert.assertNull(req.op)
         Assert.assertNull(req.req1)
         Assert.assertNull(req.req2)
-        Assert.assertEquals(RangeOperator.GTE, req.range.op)
-        Assert.assertEquals(Semver("0.0.0"), req.range.version)
+        Assert.assertEquals(RangeOperator.GTE, req.range?.op)
+        Assert.assertEquals(Semver("0.0.0"), req.range?.version)
     }
 
     @Test
@@ -295,8 +295,8 @@ class RequirementTest {
         Assert.assertNull(req.op)
         Assert.assertNull(req.req1)
         Assert.assertNull(req.req2)
-        Assert.assertEquals(RangeOperator.GTE, req.range.op)
-        Assert.assertEquals(Semver("0.0.0"), req.range.version)
+        Assert.assertEquals(RangeOperator.GTE, req.range?.op)
+        Assert.assertEquals(Semver("0.0.0"), req.range?.version)
     }
 
     @Test
@@ -304,8 +304,8 @@ class RequirementTest {
         val req = Requirement.buildIvy("1.2.+")
         Assert.assertEquals(Requirement.RequirementOperator.AND, req.op)
         Assert.assertNull(req.range)
-        assertIsRange(req.req1, "1.2.0", RangeOperator.GTE)
-        assertIsRange(req.req2, "1.3.0", RangeOperator.LT)
+        assertIsRange(req.req1!!, "1.2.0", RangeOperator.GTE)
+        assertIsRange(req.req2!!, "1.3.0", RangeOperator.LT)
     }
 
     @Test
@@ -313,8 +313,8 @@ class RequirementTest {
         val req = Requirement.buildIvy("1.+")
         Assert.assertEquals(Requirement.RequirementOperator.AND, req.op)
         Assert.assertNull(req.range)
-        assertIsRange(req.req1, "1.0.0", RangeOperator.GTE)
-        assertIsRange(req.req2, "2.0.0", RangeOperator.LT)
+        assertIsRange(req.req1!!, "1.0.0", RangeOperator.GTE)
+        assertIsRange(req.req2!!, "2.0.0", RangeOperator.LT)
     }
 
     @Test
@@ -449,12 +449,12 @@ class RequirementTest {
         // '~> 0' Version 0 and higher, this is basically the same as not having it.
         var req = Requirement.tildeRequirement("0", SemverType.COCOAPODS)
         Assert.assertNull(req.op)
-        Assert.assertEquals(RangeOperator.GTE, req.range.op)
-        Assert.assertTrue(req.range.version.isEquivalentTo("0.0.0"))
+        Assert.assertEquals(RangeOperator.GTE, req.range?.op)
+        Assert.assertTrue(req.range?.version?.isEquivalentTo("0.0.0") ?: false)
         req = Requirement.tildeRequirement("1", SemverType.COCOAPODS)
         Assert.assertNull(req.op)
-        Assert.assertEquals(RangeOperator.GTE, req.range.op)
-        Assert.assertTrue(req.range.version.isEquivalentTo("1.0.0"))
+        Assert.assertEquals(RangeOperator.GTE, req.range?.op)
+        Assert.assertTrue(req.range?.version?.isEquivalentTo("1.0.0") ?: false)
     }
 
     @Test
@@ -518,8 +518,8 @@ class RequirementTest {
             Assert.assertNull(requirement.op)
             Assert.assertNull(requirement.req2)
             val range = requirement.range
-            Assert.assertTrue(range.version.isEquivalentTo(version))
-            Assert.assertEquals(operator, range.op)
+            Assert.assertTrue(range?.version?.isEquivalentTo(version) ?: false)
+            Assert.assertEquals(operator, range?.op)
         }
 
         private fun tildeTest(requirement: String, lower: String, upper: String, type: SemverType) {
@@ -546,12 +546,12 @@ class RequirementTest {
             Assert.assertEquals(Requirement.RequirementOperator.AND, req.op)
             val req1 = req.req1
             val lowOp = if (lowerStrict) RangeOperator.GT else RangeOperator.GTE
-            Assert.assertEquals(lowOp, req1.range.op)
-            Assert.assertEquals(lower, req1.range.version.value)
+            Assert.assertEquals(lowOp, req1?.range?.op)
+            Assert.assertEquals(lower, req1?.range?.version?.value)
             val req2 = req.req2
             val upOp = if (upperStrict) RangeOperator.LT else RangeOperator.LTE
-            Assert.assertEquals(upOp, req2.range.op)
-            Assert.assertEquals(upper, req2.range.version.value)
+            Assert.assertEquals(upOp, req2?.range?.op)
+            Assert.assertEquals(upper, req2?.range?.version?.value)
         }
     }
 }
