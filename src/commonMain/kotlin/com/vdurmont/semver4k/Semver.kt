@@ -87,14 +87,14 @@ class Semver @JvmOverloads constructor(val originalValue: String, val type: Semv
                 mainTokens = tokens[0].split(".").toTypedArray()
             }
             try {
-                major = Integer.valueOf(mainTokens[0])
+                major = mainTokens[0].toInt()
             } catch (e: NumberFormatException) {
                 throw SemverException("Invalid version (no major version): $value")
             } catch (e: IndexOutOfBoundsException) {
                 throw SemverException("Invalid version (no major version): $value")
             }
             try {
-                tempMinor = Integer.valueOf(mainTokens[1])
+                tempMinor = mainTokens[1].toInt()
             } catch (e: IndexOutOfBoundsException) {
                 if (type == SemverType.STRICT) {
                     throw SemverException("Invalid version (no minor version): $value")
@@ -105,7 +105,7 @@ class Semver @JvmOverloads constructor(val originalValue: String, val type: Semv
                 }
             }
             try {
-                tempPatch = Integer.valueOf(mainTokens[2])
+                tempPatch = mainTokens[2].toInt()
             } catch (e: IndexOutOfBoundsException) {
                 if (type == SemverType.STRICT) {
                     throw SemverException("Invalid version (no patch version): $value")
@@ -237,8 +237,8 @@ class Semver @JvmOverloads constructor(val originalValue: String, val type: Semv
             var cmp: Int
             cmp = try {
                 // Trying to resolve the suffix part with an integer
-                val t1 = Integer.valueOf(tokens1[i])
-                val t2 = Integer.valueOf(tokens2[i])
+                val t1 = tokens1[i]!!.toInt()
+                val t2 = tokens2[i]!!.toInt()
                 t1 - t2
             } catch (e: NumberFormatException) {
                 // Else, do a string comparison

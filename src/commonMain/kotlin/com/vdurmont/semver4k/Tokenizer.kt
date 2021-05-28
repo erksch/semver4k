@@ -1,7 +1,6 @@
 package com.vdurmont.semver4k
 
 import com.vdurmont.semver4k.Semver.SemverType
-import kotlin.jvm.JvmOverloads
 
 /**
  * Utility class to convert a NPM requirement string into a list of tokens.
@@ -20,7 +19,6 @@ object Tokenizer {
      *
      * @return the list of tokens
      */
-    @JvmStatic
     fun tokenize(requirement: String, type: SemverType): List<Token?> {
         var requirement = requirement
         val specialChars: Map<Char, Token> = SPECIAL_CHARS[type]!!
@@ -67,7 +65,7 @@ object Tokenizer {
     /**
      * A token in a requirement string. Has a type and a value if it is of type VERSION
      */
-    class Token @JvmOverloads constructor(val type: TokenType, var value: String? = null) {
+    class Token(val type: TokenType, var value: String? = null) {
         fun append(c: Char) {
             if (value == null) value = ""
             value += c

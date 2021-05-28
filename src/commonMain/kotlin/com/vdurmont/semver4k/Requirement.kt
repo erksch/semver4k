@@ -237,15 +237,15 @@ class Requirement
             }
             val matchPath = IVY_DYNAMIC_PATCH_PATTERN.find(requirement)
             if (matchPath != null) {
-                val major = Integer.valueOf(matchPath.groupValues[1])
-                val minor = Integer.valueOf(matchPath.groupValues[2])
+                val major = matchPath.groupValues[1].toInt()
+                val minor = matchPath.groupValues[2].toInt()
                 val lower = Requirement(Range("$major.$minor.0", RangeOperator.GTE), null, null, null)
                 val upper = Requirement(Range(major.toString() + "." + (minor + 1) + ".0", RangeOperator.LT), null, null, null)
                 return Requirement(null, lower, RequirementOperator.AND, upper)
             }
             val matchMinor = IVY_DYNAMIC_MINOR_PATTERN.find(requirement)
             if (matchMinor != null) {
-                val major = Integer.valueOf(matchMinor.groupValues[1])
+                val major = matchMinor.groupValues[1].toInt()
                 val lower = Requirement(Range("$major.0.0", RangeOperator.GTE), null, null, null)
                 val upper = Requirement(Range((major + 1).toString() + ".0.0", RangeOperator.LT), null, null, null)
                 return Requirement(null, lower, RequirementOperator.AND, upper)
