@@ -23,3 +23,14 @@ jobs:
         java-version: ${{ matrix.java }}
     - name: Build with Gradle
       run: ./gradlew check
+  build-macos:
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up JDK
+      uses: actions/setup-java@v2
+      with:
+        distribution: 'adopt'
+        java-version: '11'
+    - name: Build with Gradle
+      run: ./gradlew check
