@@ -7,6 +7,7 @@ This library is a frok of [semver4j](https://github.com/vdurmont/semver4j) compl
 Supported Kotlin Multiplatform targets:
 * jvm
 * ios
+* (Additional targets can be added as needed)
 
 ## Installation
 
@@ -18,14 +19,14 @@ Add the dependency to your project:
 <dependency>
   <groupId>de.voize</groupId>
   <artifactId>semver4k</artifactId>
-  <version>4.0.0</version>
+  <version>4.0.2</version>
 </dependency>
 ```
 
 #### Using gradle
 
 ```kotlin
-implementation("de.voize:semver4j:4.0.0")
+implementation("de.voize:semver4j:4.0.2")
 ```
 
 ## Usage
