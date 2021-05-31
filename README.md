@@ -26,14 +26,14 @@ Add the dependency to your project:
 #### Using gradle
 
 ```kotlin
-implementation("de.voize:semver4j:4.0.2")
+implementation("de.voize:semver4k:4.0.2")
 ```
 
 ## Usage
 
 ### What is a version?
 
-In Semver4j, a version looks like: `1.2.3-beta.4+sha899d8g79f87`.
+In Semver4k, a version looks like: `1.2.3-beta.4+sha899d8g79f87`.
 
 - `1` is the major part (required)
 - `2` is the minor part (required in strict mode)
