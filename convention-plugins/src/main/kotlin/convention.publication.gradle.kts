@@ -4,6 +4,7 @@ plugins {
     `maven-publish`
     signing
     id("org.jetbrains.dokka")
+    id("io.github.gradle-nexus.publish-plugin")
 }
 
 val signingKey: String? = System.getenv("SIGNING_SIGNING_KEY")
@@ -49,18 +50,6 @@ tasks {
 }
 
 publishing {
-    // Configure maven central repository
-    repositories {
-        maven {
-            name = "sonatype"
-            setUrl("https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/")
-            credentials {
-                username = getExtraString("ossrhUsername")
-                password = getExtraString("ossrhPassword")
-            }
-        }
-    }
-
     // Configure all publications
     publications.withType<MavenPublication> {
 
@@ -88,6 +77,17 @@ publishing {
             scm {
                 url.set("https://github.com/voize-gmbh/semver4k")
             }
+        }
+    }
+}
+
+nexusPublishing {
+    repositories {
+        sonatype {
+            nexusUrl.set(uri("https://s01.oss.sonatype.org/service/local/"))
+            snapshotRepositoryUrl.set(uri("https://s01.oss.sonatype.org/content/repositories/snapshots/"))
+            username.set(getExtraString("ossrhUsername"))
+            password.set(getExtraString("ossrhPassword"))
         }
     }
 }
