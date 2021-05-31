@@ -1,0 +1,27 @@
+name: Publish
+
+on:
+  release:
+    types: [released]
+
+jobs:
+  publish:
+    name: Release build and publish
+    runs-on: macos-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'adopt'
+          java-version: '11'
+      - name: Release build
+        run: ./gradlew build
+      - name: Publish to MavenCentral
+        run: ./gradlew publishAllPublicationToSonatypeRepository --max-workers 1 closeAndReleaseSonatypeStagingRepository
+        env:
+          OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+          OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
+          SIGNING_SIGNING_KEY: ${{ secrets.SIGNING_SIGNING_KEY }}
+          SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
