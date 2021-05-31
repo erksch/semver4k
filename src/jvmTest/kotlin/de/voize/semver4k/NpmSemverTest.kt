@@ -1,6 +1,6 @@
-package com.vdurmont.semver4k
+package de.voize.semver4k
 
-import com.vdurmont.semver4k.Semver.SemverType
+import de.voize.semver4k.Semver.SemverType
 import org.junit.Assert
 import org.junit.Test
 import org.junit.runner.RunWith

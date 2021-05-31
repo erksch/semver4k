@@ -1,8 +1,8 @@
-package com.vdurmont.semver4k
+package de.voize.semver4k
 
-import com.vdurmont.semver4k.Tokenizer.tokenize
-import com.vdurmont.semver4k.Semver.SemverType
-import com.vdurmont.semver4k.Range.RangeOperator
+import de.voize.semver4k.Tokenizer.tokenize
+import de.voize.semver4k.Semver.SemverType
+import de.voize.semver4k.Range.RangeOperator
 
 /**
  * A requirement will provide an easy way to check if a version is satisfying.

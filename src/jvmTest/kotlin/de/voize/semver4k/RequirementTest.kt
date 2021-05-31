@@ -1,9 +1,9 @@
-package com.vdurmont.semver4k
+package de.voize.semver4k
 
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
-import com.vdurmont.semver4k.Range.RangeOperator
-import com.vdurmont.semver4k.Semver.SemverType
+import de.voize.semver4k.Range.RangeOperator
+import de.voize.semver4k.Semver.SemverType
 import io.mockk.*
 import org.junit.Assert
 import org.junit.Test

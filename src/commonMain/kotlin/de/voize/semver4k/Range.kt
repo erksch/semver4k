@@ -1,4 +1,4 @@
-package com.vdurmont.semver4k
+package de.voize.semver4k
 
 // TODO doc
 class Range(val version: Semver, val op: RangeOperator) {

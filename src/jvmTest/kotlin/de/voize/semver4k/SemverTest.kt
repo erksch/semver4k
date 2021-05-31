@@ -1,8 +1,8 @@
-package com.vdurmont.semver4k
+package de.voize.semver4k
 
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
-import com.vdurmont.semver4k.Semver.SemverType
+import de.voize.semver4k.Semver.SemverType
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify

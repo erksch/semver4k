@@ -3,7 +3,7 @@ plugins {
     id("convention.publication")
 }
 
-group = "com.vdurmont"
+group = "de.voize"
 version = "4.0.0"
 
 repositories {
