@@ -1,8 +1,8 @@
 package de.voize.semver4k
 
-import de.voize.semver4k.Range.RangeOperator
-import de.voize.semver4k.Semver.SemverType
 import de.voize.semver4k.Tokenizer.tokenize
+import de.voize.semver4k.Semver.SemverType
+import de.voize.semver4k.Range.RangeOperator
 
 /**
  * A requirement will provide an easy way to check if a version is satisfying.
@@ -68,9 +68,8 @@ class Requirement
                         if (range.version.suffixTokens?.isNotEmpty() == true) {
                             val allowed = range.version
                             if (version.major == allowed.major &&
-                                version.minor == allowed.minor &&
-                                version.patch == allowed.patch
-                            ) {
+                                    version.minor == allowed.minor &&
+                                    version.patch == allowed.patch) {
                                 return true
                             }
                         }
@@ -190,21 +189,21 @@ class Requirement
         private val IVY_DYNAMIC_MINOR_PATTERN = Regex("(\\d+)\\.\\+")
         private val IVY_LATEST_PATTERN = Regex("latest\\.\\w+")
         private val IVY_MATH_BOUNDED_PATTERN = Regex(
-            "(\\[|\\])" +  // 1ST GROUP: a square bracket
-                    "([\\d\\.]+)" +  // 2ND GROUP: a version
-                    "," +  // a comma separator
-                    "([\\d\\.]+)" +  // 3RD GROUP: a version
-                    "(\\[|\\])" // 4TH GROUP: a square bracket
+                "(\\[|\\])" +  // 1ST GROUP: a square bracket
+                        "([\\d\\.]+)" +  // 2ND GROUP: a version
+                        "," +  // a comma separator
+                        "([\\d\\.]+)" +  // 3RD GROUP: a version
+                        "(\\[|\\])" // 4TH GROUP: a square bracket
         )
         private val IVY_MATH_LOWER_UNBOUNDED_PATTERN = Regex(
-            "\\(," +  // a parenthesis and a comma separator
-                    "([\\d\\.]+)" +  // 1ST GROUP: a version
-                    "(\\[|\\])" // 2ND GROUP: a square bracket
+                "\\(," +  // a parenthesis and a comma separator
+                        "([\\d\\.]+)" +  // 1ST GROUP: a version
+                        "(\\[|\\])" // 2ND GROUP: a square bracket
         )
         private val IVY_MATH_UPPER_UNBOUNDED_PATTERN = Regex(
-            "(\\[|\\])" +  // 1ST GROUP: a square bracket
-                    "([\\d\\.]+)" +  // 2ND GROUP: a version
-                    ",\\)" // a comma separator and a parenthesis
+                "(\\[|\\])" +  // 1ST GROUP: a square bracket
+                        "([\\d\\.]+)" +  // 2ND GROUP: a version
+                        ",\\)" // a comma separator and a parenthesis
         )
 
         /**
@@ -296,8 +295,7 @@ class Requirement
                 val major = matchPath.groupValues[1].toInt()
                 val minor = matchPath.groupValues[2].toInt()
                 val lower = Requirement(Range("$major.$minor.0", RangeOperator.GTE), null, null, null)
-                val upper =
-                    Requirement(Range(major.toString() + "." + (minor + 1) + ".0", RangeOperator.LT), null, null, null)
+                val upper = Requirement(Range(major.toString() + "." + (minor + 1) + ".0", RangeOperator.LT), null, null, null)
                 return Requirement(null, lower, RequirementOperator.AND, upper)
             }
             val matchMinor = IVY_DYNAMIC_MINOR_PATTERN.find(requirement)
@@ -616,11 +614,11 @@ class Requirement
          */
         private fun extrapolateVersion(semver: Semver): Semver {
             val sb = StringBuilder()
-                .append(semver.major)
-                .append(".")
-                .append(if (semver.minor == null) 0 else semver.minor)
-                .append(".")
-                .append(if (semver.patch == null) 0 else semver.patch)
+                    .append(semver.major)
+                    .append(".")
+                    .append(if (semver.minor == null) 0 else semver.minor)
+                    .append(".")
+                    .append(if (semver.patch == null) 0 else semver.patch)
             var first = true
             for (i in 0 until (semver.suffixTokens?.size ?: 0)) {
                 if (first) {
