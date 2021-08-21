@@ -1,8 +1,8 @@
 package de.voize.semver4k
 
-import de.voize.semver4k.Tokenizer.tokenize
-import de.voize.semver4k.Semver.SemverType
 import de.voize.semver4k.Range.RangeOperator
+import de.voize.semver4k.Semver.SemverType
+import de.voize.semver4k.Tokenizer.tokenize
 
 /**
  * A requirement will provide an easy way to check if a version is satisfying.
@@ -68,8 +68,9 @@ class Requirement
                         if (range.version.suffixTokens?.isNotEmpty() == true) {
                             val allowed = range.version
                             if (version.major == allowed.major &&
-                                    version.minor == allowed.minor &&
-                                    version.patch == allowed.patch) {
+                                version.minor == allowed.minor &&
+                                version.patch == allowed.patch
+                            ) {
                                 return true
                             }
                         }
@@ -85,6 +86,61 @@ class Requirement
             RequirementOperator.OR -> return req1!!.isSatisfiedBy(version) || req2!!.isSatisfiedBy(version)
             else -> throw RuntimeException("Code error. Unknown RequirementOperator: " + op) // Should never happen
         }
+    }
+
+    fun minVersion(): Semver? {
+        var minver: Semver? = Semver("0.0.0")
+        if (minver != null && this.isSatisfiedBy(minver)) {
+            return minver
+        }
+
+        minver = Semver("0.0.0-0")
+        if (this.isSatisfiedBy(minver)) {
+            return minver
+        }
+
+        minver = null
+
+        val ranges = mutableListOf<Range?>()
+        this.getAllAllRanges(this, ranges)
+
+        for (range in ranges) {
+            if (range == null) {
+                continue;
+            }
+
+            var compver = range.version;
+            if (range.op.equals(RangeOperator.GT)) {
+                compver = compver.nextIncrement();
+            }
+
+            // Pick this new version if it's smaller than the one we already have and still satisfies the requirements
+            if ((range.op.equals(RangeOperator.GT)
+                || range.op.equals(RangeOperator.GTE)
+                || range.op.equals(RangeOperator.EQ))
+                && (minver == null || minver.compareTo(compver) > 0)
+                && this.isSatisfiedBy(compver)
+            ) {
+                minver = compver
+            }
+        }
+
+        if (minver != null && this.isSatisfiedBy(minver)) {
+            return minver
+        }
+
+        return null
+    }
+
+    private fun getAllAllRanges(requirement: Requirement?, res: MutableList<Range?>): List<Range?> {
+        if (requirement!!.range != null) {
+            res.add(requirement.range)
+        } else {
+            getAllAllRanges(requirement.req1, res)
+            getAllAllRanges(requirement.req2, res)
+        }
+
+        return res
     }
 
     private fun getAllRanges(requirement: Requirement?, res: MutableList<Range?>): List<Range?> {
@@ -134,21 +190,21 @@ class Requirement
         private val IVY_DYNAMIC_MINOR_PATTERN = Regex("(\\d+)\\.\\+")
         private val IVY_LATEST_PATTERN = Regex("latest\\.\\w+")
         private val IVY_MATH_BOUNDED_PATTERN = Regex(
-                "(\\[|\\])" +  // 1ST GROUP: a square bracket
-                        "([\\d\\.]+)" +  // 2ND GROUP: a version
-                        "," +  // a comma separator
-                        "([\\d\\.]+)" +  // 3RD GROUP: a version
-                        "(\\[|\\])" // 4TH GROUP: a square bracket
+            "(\\[|\\])" +  // 1ST GROUP: a square bracket
+                    "([\\d\\.]+)" +  // 2ND GROUP: a version
+                    "," +  // a comma separator
+                    "([\\d\\.]+)" +  // 3RD GROUP: a version
+                    "(\\[|\\])" // 4TH GROUP: a square bracket
         )
         private val IVY_MATH_LOWER_UNBOUNDED_PATTERN = Regex(
-                "\\(," +  // a parenthesis and a comma separator
-                        "([\\d\\.]+)" +  // 1ST GROUP: a version
-                        "(\\[|\\])" // 2ND GROUP: a square bracket
+            "\\(," +  // a parenthesis and a comma separator
+                    "([\\d\\.]+)" +  // 1ST GROUP: a version
+                    "(\\[|\\])" // 2ND GROUP: a square bracket
         )
         private val IVY_MATH_UPPER_UNBOUNDED_PATTERN = Regex(
-                "(\\[|\\])" +  // 1ST GROUP: a square bracket
-                        "([\\d\\.]+)" +  // 2ND GROUP: a version
-                        ",\\)" // a comma separator and a parenthesis
+            "(\\[|\\])" +  // 1ST GROUP: a square bracket
+                    "([\\d\\.]+)" +  // 2ND GROUP: a version
+                    ",\\)" // a comma separator and a parenthesis
         )
 
         /**
@@ -240,7 +296,8 @@ class Requirement
                 val major = matchPath.groupValues[1].toInt()
                 val minor = matchPath.groupValues[2].toInt()
                 val lower = Requirement(Range("$major.$minor.0", RangeOperator.GTE), null, null, null)
-                val upper = Requirement(Range(major.toString() + "." + (minor + 1) + ".0", RangeOperator.LT), null, null, null)
+                val upper =
+                    Requirement(Range(major.toString() + "." + (minor + 1) + ".0", RangeOperator.LT), null, null, null)
                 return Requirement(null, lower, RequirementOperator.AND, upper)
             }
             val matchMinor = IVY_DYNAMIC_MINOR_PATTERN.find(requirement)
@@ -559,11 +616,11 @@ class Requirement
          */
         private fun extrapolateVersion(semver: Semver): Semver {
             val sb = StringBuilder()
-                    .append(semver.major)
-                    .append(".")
-                    .append(if (semver.minor == null) 0 else semver.minor)
-                    .append(".")
-                    .append(if (semver.patch == null) 0 else semver.patch)
+                .append(semver.major)
+                .append(".")
+                .append(if (semver.minor == null) 0 else semver.minor)
+                .append(".")
+                .append(if (semver.patch == null) 0 else semver.patch)
             var first = true
             for (i in 0 until (semver.suffixTokens?.size ?: 0)) {
                 if (first) {

@@ -254,9 +254,10 @@ class RequirementTest {
     @Test
     fun buildNPM_with_hyphen() {
         val reqs = arrayOf(
-                Requirement.buildNPM("1.2.3-2.3.4"),
-                Requirement.buildNPM("1.2.3 -2.3.4"),
-                Requirement.buildNPM("1.2.3- 2.3.4"),
+                // Hyphens must have a space before and after to be valid npm requirements
+                //Requirement.buildNPM("1.2.3-2.3.4"),
+                //Requirement.buildNPM("1.2.3 -2.3.4"),
+                //Requirement.buildNPM("1.2.3- 2.3.4"),
                 Requirement.buildNPM("1.2.3 - 2.3.4")
         )
         for (req in reqs) {
@@ -517,6 +518,68 @@ class RequirementTest {
         Assert.assertEquals(requirement.hashCode().toLong(), Requirement.buildCocoapods("1.2.3").hashCode().toLong())
         Assert.assertNotEquals(requirement.hashCode().toLong(), Requirement.buildStrict("1.2.4").hashCode().toLong())
         Assert.assertNotEquals(requirement.hashCode().toLong(), Requirement.buildNPM(">1.2.3").hashCode().toLong())
+    }
+
+    @Test
+    fun testMinVersion() {
+        // Stars
+        Assert.assertEquals(Semver("0.0.0"), Requirement.buildNPM("*").minVersion())
+        Assert.assertEquals(Semver("0.0.0"), Requirement.buildNPM("* || >=2").minVersion())
+        Assert.assertEquals(Semver("0.0.0"), Requirement.buildNPM(">=2 || *").minVersion())
+        Assert.assertEquals(Semver("0.0.0"), Requirement.buildNPM(">2 || *").minVersion())
+
+        // equal
+        Assert.assertEquals(Semver("1.0.0"), Requirement.buildNPM("1.0.0").minVersion())
+        Assert.assertEquals(Semver("1.0", SemverType.LOOSE), Requirement.buildLoose("1.0").minVersion())
+        Assert.assertEquals(Semver("1.0.0"), Requirement.buildNPM("1.0.x").minVersion())
+        Assert.assertEquals(Semver("1.0.0"), Requirement.buildNPM("1.0.*").minVersion())
+        Assert.assertEquals(Semver("1.0.0"), Requirement.buildNPM("1").minVersion())
+        Assert.assertEquals(Semver("1.0.0"), Requirement.buildNPM("1.x.x").minVersion())
+        Assert.assertEquals(Semver("1.0.0"), Requirement.buildNPM("1.x.x").minVersion())
+        Assert.assertEquals(Semver("1.0.0"), Requirement.buildNPM("1.*.x").minVersion())
+        Assert.assertEquals(Semver("1.0.0"), Requirement.buildNPM("1.x.*").minVersion())
+        Assert.assertEquals(Semver("1.0.0"), Requirement.buildNPM("1.x").minVersion())
+        Assert.assertEquals(Semver("1.0.0"), Requirement.buildNPM("1.*").minVersion())
+        Assert.assertEquals(Semver("1.0.0"), Requirement.buildNPM("=1.0.0").minVersion())
+
+        // Tilde
+        Assert.assertEquals(Semver("1.1.1"), Requirement.buildNPM("~1.1.1").minVersion())
+        Assert.assertEquals(Semver("1.1.1-beta"), Requirement.buildNPM("~1.1.1-beta").minVersion())
+        Assert.assertEquals(Semver("1.1.1"), Requirement.buildNPM("~1.1.1 || >=2").minVersion())
+
+        // Caret
+        Assert.assertEquals(Semver("1.1.1"), Requirement.buildNPM("^1.1.1").minVersion())
+        Assert.assertEquals(Semver("1.1.1-beta"), Requirement.buildNPM("^1.1.1-beta").minVersion())
+        Assert.assertEquals(Semver("1.1.1"), Requirement.buildNPM("^1.1.1 || >=2").minVersion())
+        Assert.assertEquals(Semver("2.16.2"), Requirement.buildNPM("^2.16.2 ^2.16").minVersion())
+
+        // '-' operator
+        Assert.assertEquals(Semver("1.1.1"), Requirement.buildNPM("1.1.1 - 1.8.0").minVersion(), )
+        Assert.assertEquals(Semver("1.1.0"), Requirement.buildNPM("1.1 - 1.8.0").minVersion())
+
+        // Less / less or equal
+        Assert.assertEquals(Semver("0.0.0"), Requirement.buildNPM("<2").minVersion(), )
+        Assert.assertEquals(Semver("0.0.0-0"), Requirement.buildNPM("<0.0.0-beta").minVersion())
+        Assert.assertEquals(Semver("0.0.0"), Requirement.buildNPM("<0.0.1-beta").minVersion())
+        Assert.assertEquals(Semver("0.0.0"), Requirement.buildNPM("<2 || >4").minVersion())
+        Assert.assertEquals(Semver("0.0.0"), Requirement.buildNPM(">4 || <2").minVersion())
+        Assert.assertEquals(Semver("0.0.0"), Requirement.buildNPM("<=2 || >=4").minVersion())
+        Assert.assertEquals(Semver("0.0.0"), Requirement.buildNPM(">=4 || <=2").minVersion())
+        Assert.assertEquals(Semver("0.0.0-alpha.0"), Requirement.buildNPM("<0.0.0-beta >0.0.0-alpha").minVersion())
+        Assert.assertEquals(Semver("0.0.0-alpha.0"), Requirement.buildNPM(">0.0.0-alpha <0.0.0-beta").minVersion())
+
+        // Greater than or equal
+        Assert.assertEquals(Semver("1.1.1"), Requirement.buildNPM(">=1.1.1 <2 || >=2.2.2 <2").minVersion())
+        Assert.assertEquals(Semver("1.1.1"), Requirement.buildNPM(">=2.2.2 <2 || >=1.1.1 <2").minVersion())
+
+        // Greater than but not equal
+        Assert.assertEquals(Semver("1.0.1"), Requirement.buildNPM(">1.0.0").minVersion())
+        Assert.assertEquals(Semver("1.0.0-0.0"), Requirement.buildNPM(">1.0.0-0").minVersion())
+        Assert.assertEquals(Semver("1.0.0-beta.0"), Requirement.buildNPM(">1.0.0-beta").minVersion())
+        Assert.assertEquals(Semver("1.0.1"), Requirement.buildNPM(">2 || >1.0.0").minVersion())
+        Assert.assertEquals(Semver("1.0.0-0.0"), Requirement.buildNPM(">2 || >1.0.0-0").minVersion())
+        Assert.assertEquals(Semver("1.0.0-beta.0"), Requirement.buildNPM(">2 || >1.0.0-beta").minVersion())
+        Assert.assertEquals(Semver("3", SemverType.LOOSE), Requirement.buildNPM(">2").minVersion())
     }
 
     companion object {
