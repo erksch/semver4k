@@ -91,32 +91,25 @@ class TokenizerTest {
     fun tokenize_NPM_suffix() {
         val requirement = "1.2.7-rc.1"
         val tokens = Tokenizer.tokenize(requirement, Semver.SemverType.NPM)
-        Assert.assertEquals(3, tokens.size.toLong())
-        Assert.assertEquals(Tokenizer.TokenType.VERSION, tokens[0]?.type)
-        Assert.assertEquals("1.2.7", tokens[0]?.value)
 
-        // @TODO: Differentiate between hyphen for range vs. suffix
-        Assert.assertEquals(Tokenizer.TokenType.HYPHEN, tokens[1]?.type)
-        Assert.assertEquals(Tokenizer.TokenType.VERSION, tokens[2]?.type)
-        Assert.assertEquals("rc.1", tokens[2]?.value)
+        // in NPM, A range can only be considered when `-` is surrounded by spaces
+        // Since the - is directly next to the version it's automatically
+        // considered as part of the version
+        Assert.assertEquals(1, tokens.size.toLong())
+        Assert.assertEquals(Tokenizer.TokenType.VERSION, tokens[0]?.type)
+        Assert.assertEquals("1.2.7-rc.1", tokens[0]?.value)
     }
 
     @Test
     fun tokenize_NPM_or_suffix() {
         val requirement = "1.2.7-rc.1 || 1.2.7-rc.2"
         val tokens = Tokenizer.tokenize(requirement, Semver.SemverType.NPM)
-        Assert.assertEquals(7, tokens.size.toLong())
+        Assert.assertEquals(3, tokens.size.toLong())
         Assert.assertEquals(Tokenizer.TokenType.VERSION, tokens[0]?.type)
-        Assert.assertEquals("1.2.7", tokens[0]?.value)
-        Assert.assertEquals(Tokenizer.TokenType.HYPHEN, tokens[1]?.type)
+        Assert.assertEquals("1.2.7-rc.1", tokens[0]?.value)
+        Assert.assertEquals(Tokenizer.TokenType.OR, tokens[1]?.type)
         Assert.assertEquals(Tokenizer.TokenType.VERSION, tokens[2]?.type)
-        Assert.assertEquals("rc.1", tokens[2]?.value)
-        Assert.assertEquals(Tokenizer.TokenType.OR, tokens[3]?.type)
-        Assert.assertEquals(Tokenizer.TokenType.VERSION, tokens[4]?.type)
-        Assert.assertEquals("1.2.7", tokens[4]?.value)
-        Assert.assertEquals(Tokenizer.TokenType.HYPHEN, tokens[5]?.type)
-        Assert.assertEquals(Tokenizer.TokenType.VERSION, tokens[6]?.type)
-        Assert.assertEquals("rc.2", tokens[6]?.value)
+        Assert.assertEquals("1.2.7-rc.2", tokens[2]?.value)
     }
 
     @Test
