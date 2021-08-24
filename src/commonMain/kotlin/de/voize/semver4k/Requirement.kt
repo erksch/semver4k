@@ -101,7 +101,7 @@ class Requirement
         minver = null
 
         val ranges = mutableListOf<Range?>()
-        this.getAllAllRanges(this, ranges)
+        this.getAllGreaterOrEqualRanges(this, ranges)
 
         for (range in ranges) {
             if (range == null) {
@@ -131,12 +131,17 @@ class Requirement
         return null
     }
 
-    private fun getAllAllRanges(requirement: Requirement?, res: MutableList<Range?>): List<Range?> {
+    private fun getAllGreaterOrEqualRanges(requirement: Requirement?, res: MutableList<Range?>): List<Range?> {
         if (requirement!!.range != null) {
-            res.add(requirement.range)
+            if (requirement.range!!.op.equals(RangeOperator.GT)
+                || requirement.range.op.equals(RangeOperator.GTE)
+                || requirement.range.op.equals(RangeOperator.EQ)
+            ) {
+                res.add(requirement.range)
+            }
         } else {
-            getAllAllRanges(requirement.req1, res)
-            getAllAllRanges(requirement.req2, res)
+            getAllGreaterOrEqualRanges(requirement.req1, res)
+            getAllGreaterOrEqualRanges(requirement.req2, res)
         }
 
         return res
