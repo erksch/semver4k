@@ -19,14 +19,14 @@ Add the dependency to your project:
 <dependency>
   <groupId>de.voize</groupId>
   <artifactId>semver4k</artifactId>
-  <version>4.0.2</version>
+  <version>4.1.0</version>
 </dependency>
 ```
 
 #### Using gradle
 
 ```kotlin
-implementation("de.voize:semver4k:4.0.2")
+implementation("de.voize:semver4k:4.1.0")
 ```
 
 ## Usage
@@ -180,6 +180,7 @@ You can also use built-in versioning methods such as:
 - `nextMajor()`: `1.2.3-beta.4+sha32iddfu987 => 2.0.0`
 - `nextMinor()`: `1.2.3-beta.4+sha32iddfu987 => 1.3.0`
 - `nextPatch()`: `1.2.3-beta.4+sha32iddfu987 => 1.2.4`
+- `nextIncrement()`: `1.2.3-beta.4+sha32iddfu987 => 1.2.3-beta.5+sha32iddfu987`
 
 ## Contributing
 
