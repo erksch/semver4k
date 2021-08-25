@@ -470,6 +470,30 @@ class Semver @JvmOverloads constructor(val originalValue: String, val type: Semv
         return with(major!!, minor!!, patch!! + 1, false, false)
     }
 
+    fun nextIncrement(): Semver {
+        if (suffixTokens == null || suffixTokens.isEmpty()) {
+            if (patch != null) {
+                return withIncPatch()
+            }
+
+            if (minor != null) {
+                return create(type, major!!, minor!!.plus(1), null, null, build)
+            }
+
+            return create(type, major!!.plus(1), null, null, null, build)
+        }
+
+        if (suffixTokens.size > 1 && suffixTokens.last() != null && suffixTokens.last()!!.toIntOrNull() != null) {
+            val suffixes = suffixTokens.sliceArray(IntRange(0, suffixTokens.size - 2)).joinToString(separator = ".")
+            val last = suffixTokens.last()!!.toInt() + 1
+
+            return withSuffix("$suffixes.$last")
+        } else {
+            val suffixes = suffixTokens.joinToString(separator = ".")
+            return withSuffix("$suffixes.0")
+        }
+    }
+
     private fun with(major: Int, minor: Int, patch: Int, suffix: Boolean, build: Boolean): Semver {
         val tempMinor: Int? = if (this.minor != null) minor else null
         val tempPatch: Int? = if (this.patch != null) patch else null

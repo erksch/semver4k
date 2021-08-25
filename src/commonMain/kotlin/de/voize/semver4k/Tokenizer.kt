@@ -9,6 +9,19 @@ object Tokenizer {
     private val SPECIAL_CHARS: MutableMap<SemverType, MutableMap<Char, Token>> = mutableMapOf()
 
     /**
+     * Hyphens are valid in NPM only when surrounded by spaces
+     * We can then safely assume that a token that doesn't have a space before can't be of type HYPHEN
+     * And thus must be part of the version
+     */
+    private fun isValidHyphen(c: Char?, type: SemverType, spaceBefore: Boolean): Boolean {
+        if (!TokenType.HYPHEN.character!!.equals(c) || type != SemverType.NPM) {
+            return true;
+        }
+
+        return TokenType.HYPHEN.character.equals(c) && type == SemverType.NPM && spaceBefore;
+    }
+
+    /**
      * Takes a NPM requirement string and creates a list of tokens by performing 3 operations:
      * - If the token is a version, it will add the version string
      * - If the token is an operator, it will add the operator
@@ -34,9 +47,13 @@ object Tokenizer {
         var previousToken: Token? = null
         val chars = requirement.toCharArray()
         var token: Token? = null
+        var spaceBefore = false;
         for (c in chars) {
-            if (c == ' ') continue
-            if (specialChars.containsKey(c)) {
+            if (c == ' ') {
+                spaceBefore = true;
+                continue
+            }
+            if (specialChars.containsKey(c) && isValidHyphen(c, type, spaceBefore)) {
                 if (token != null) {
                     tokens.add(token)
                     previousToken = token
@@ -55,6 +72,7 @@ object Tokenizer {
                 }
                 token.append(c)
             }
+            spaceBefore = false;
         }
         if (token != null) {
             tokens.add(token)

@@ -87,6 +87,66 @@ class Requirement
         }
     }
 
+    fun minVersion(): Semver? {
+        var minver: Semver? = Semver("0.0.0")
+        if (minver != null && this.isSatisfiedBy(minver)) {
+            return minver
+        }
+
+        minver = Semver("0.0.0-0")
+        if (this.isSatisfiedBy(minver)) {
+            return minver
+        }
+
+        minver = null
+
+        val ranges = mutableListOf<Range?>()
+        this.getAllGreaterOrEqualRanges(this, ranges)
+
+        for (range in ranges) {
+            if (range == null) {
+                continue;
+            }
+
+            var compver = range.version;
+            if (range.op.equals(RangeOperator.GT)) {
+                compver = compver.nextIncrement();
+            }
+
+            // Pick this new version if it's smaller than the one we already have and still satisfies the requirements
+            if ((range.op.equals(RangeOperator.GT)
+                || range.op.equals(RangeOperator.GTE)
+                || range.op.equals(RangeOperator.EQ))
+                && (minver == null || minver.compareTo(compver) > 0)
+                && this.isSatisfiedBy(compver)
+            ) {
+                minver = compver
+            }
+        }
+
+        if (minver != null && this.isSatisfiedBy(minver)) {
+            return minver
+        }
+
+        return null
+    }
+
+    private fun getAllGreaterOrEqualRanges(requirement: Requirement?, res: MutableList<Range?>): List<Range?> {
+        if (requirement!!.range != null) {
+            if (requirement.range!!.op.equals(RangeOperator.GT)
+                || requirement.range.op.equals(RangeOperator.GTE)
+                || requirement.range.op.equals(RangeOperator.EQ)
+            ) {
+                res.add(requirement.range)
+            }
+        } else {
+            getAllGreaterOrEqualRanges(requirement.req1, res)
+            getAllGreaterOrEqualRanges(requirement.req2, res)
+        }
+
+        return res
+    }
+
     private fun getAllRanges(requirement: Requirement?, res: MutableList<Range?>): List<Range?> {
         if (requirement!!.range != null) {
             res.add(requirement.range)

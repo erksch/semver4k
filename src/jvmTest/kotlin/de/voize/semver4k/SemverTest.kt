@@ -361,6 +361,59 @@ class SemverTest {
         Assert.assertFalse(Semver("0.1.2").isStable)
     }
 
+    @Test
+    fun findsNextIncrements() {
+        Assert.assertEquals(Semver("0.1.1"), Semver("0.1.0").nextIncrement())
+        Assert.assertEquals(Semver("1.0.1"), Semver("1.0.0").nextIncrement())
+        Assert.assertEquals(Semver("1.0.0-beta.0"), Semver("1.0.0-beta").nextIncrement())
+        Assert.assertEquals(Semver("1.0.0-beta.5"), Semver("1.0.0-beta.4").nextIncrement())
+        Assert.assertEquals(Semver("1.0.0-beta.5+sha899-d8g79f87"), Semver("1.0.0-beta.4+sha899-d8g79f87").nextIncrement())
+    }
+
+    @Test
+    fun findsNextIncrements_loose() {
+        Assert.assertEquals(Semver("2", SemverType.LOOSE), Semver("1", SemverType.LOOSE).nextIncrement())
+        Assert.assertEquals(Semver("1.2", SemverType.LOOSE), Semver("1.1", SemverType.LOOSE).nextIncrement())
+        Assert.assertEquals(Semver("0.1.1", SemverType.LOOSE), Semver("0.1.0", SemverType.LOOSE).nextIncrement())
+        Assert.assertEquals(Semver("1.0.1", SemverType.LOOSE), Semver("1.0.0", SemverType.LOOSE).nextIncrement())
+        Assert.assertEquals(Semver("1.0.0-beta.0", SemverType.LOOSE), Semver("1.0.0-beta", SemverType.LOOSE).nextIncrement())
+        Assert.assertEquals(Semver("1.0.0-beta.5", SemverType.LOOSE), Semver("1.0.0-beta.4", SemverType.LOOSE).nextIncrement())
+        Assert.assertEquals(Semver("1.0.0-beta.5+sha899-d8g79f87", SemverType.LOOSE), Semver("1.0.0-beta.4+sha899-d8g79f87", SemverType.LOOSE).nextIncrement())
+    }
+
+    @Test
+    fun findsNextIncrements_npm() {
+        Assert.assertEquals(Semver("2", SemverType.NPM), Semver("1", SemverType.NPM).nextIncrement())
+        Assert.assertEquals(Semver("1.2", SemverType.NPM), Semver("1.1", SemverType.NPM).nextIncrement())
+        Assert.assertEquals(Semver("0.1.1", SemverType.NPM), Semver("0.1.0", SemverType.NPM).nextIncrement())
+        Assert.assertEquals(Semver("1.0.1", SemverType.NPM), Semver("1.0.0", SemverType.NPM).nextIncrement())
+        Assert.assertEquals(Semver("1.0.0-beta.0", SemverType.NPM), Semver("1.0.0-beta", SemverType.NPM).nextIncrement())
+        Assert.assertEquals(Semver("1.0.0-beta.5", SemverType.NPM), Semver("1.0.0-beta.4", SemverType.NPM).nextIncrement())
+        Assert.assertEquals(Semver("1.0.0-beta.5+sha899-d8g79f87", SemverType.NPM), Semver("1.0.0-beta.4+sha899-d8g79f87", SemverType.NPM).nextIncrement())
+    }
+
+    @Test
+    fun findsNextIncrements_ivy() {
+        Assert.assertEquals(Semver("2", SemverType.IVY), Semver("1", SemverType.IVY).nextIncrement())
+        Assert.assertEquals(Semver("1.2", SemverType.IVY), Semver("1.1", SemverType.IVY).nextIncrement())
+        Assert.assertEquals(Semver("0.1.1", SemverType.IVY), Semver("0.1.0", SemverType.IVY).nextIncrement())
+        Assert.assertEquals(Semver("1.0.1", SemverType.IVY), Semver("1.0.0", SemverType.IVY).nextIncrement())
+        Assert.assertEquals(Semver("1.0.0-beta.0", SemverType.IVY), Semver("1.0.0-beta", SemverType.IVY).nextIncrement())
+        Assert.assertEquals(Semver("1.0.0-beta.5", SemverType.IVY), Semver("1.0.0-beta.4", SemverType.IVY).nextIncrement())
+        Assert.assertEquals(Semver("1.0.0-beta.5+sha899-d8g79f87", SemverType.IVY), Semver("1.0.0-beta.4+sha899-d8g79f87", SemverType.IVY).nextIncrement())
+    }
+
+    @Test
+    fun findsNextIncrements_cocoapods() {
+        Assert.assertEquals(Semver("2", SemverType.COCOAPODS), Semver("1", SemverType.COCOAPODS).nextIncrement())
+        Assert.assertEquals(Semver("1.2", SemverType.COCOAPODS), Semver("1.1", SemverType.COCOAPODS).nextIncrement())
+        Assert.assertEquals(Semver("0.1.1", SemverType.COCOAPODS), Semver("0.1.0", SemverType.COCOAPODS).nextIncrement())
+        Assert.assertEquals(Semver("1.0.1", SemverType.COCOAPODS), Semver("1.0.0", SemverType.COCOAPODS).nextIncrement())
+        Assert.assertEquals(Semver("1.0.0-beta.0", SemverType.COCOAPODS), Semver("1.0.0-beta", SemverType.COCOAPODS).nextIncrement())
+        Assert.assertEquals(Semver("1.0.0-beta.5", SemverType.COCOAPODS), Semver("1.0.0-beta.4", SemverType.COCOAPODS).nextIncrement())
+        Assert.assertEquals(Semver("1.0.0-beta.5+sha899-d8g79f87", SemverType.COCOAPODS), Semver("1.0.0-beta.4+sha899-d8g79f87", SemverType.COCOAPODS).nextIncrement())
+    }
+
     companion object {
         private fun assertIsSemver(semver: Semver, value: String, major: Int, minor: Int?, patch: Int?, suffixTokens: Array<String>, build: String) {
             Assert.assertEquals(value, semver.value)
