@@ -2,7 +2,7 @@
 
 **Semver4k** is a lightweight Kotlin Multiplatform library that helps you handling versions. It follows the rules of the [semantic versioning](http://semver.org) specification and provides several versioning modes: strict, NPM, CocoaPods...
 
-This library is a frok of [semver4j](https://github.com/vdurmont/semver4j) completly rewritten in kotlin.
+This library is a fork of [semver4j](https://github.com/vdurmont/semver4j) completly rewritten in kotlin.
 
 Supported Kotlin Multiplatform targets:
 * jvm
