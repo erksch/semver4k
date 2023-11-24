@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        java: [ '11', '16' ]
+        java: [ '11', '17', '21' ]
     steps:
     - uses: actions/checkout@v2
     - name: Set up JDK
@@ -31,6 +31,6 @@ jobs:
       uses: actions/setup-java@v2
       with:
         distribution: 'adopt'
-        java-version: '11'
+        java-version: '17'
     - name: Build with Gradle
       run: ./gradlew check

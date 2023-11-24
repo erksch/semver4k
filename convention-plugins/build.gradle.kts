@@ -3,8 +3,8 @@ plugins {
 }
 
 dependencies {
-    implementation("org.jetbrains.dokka:dokka-gradle-plugin:1.4.32")
-    implementation("io.github.gradle-nexus:publish-plugin:1.1.0")
+    implementation("org.jetbrains.dokka:dokka-gradle-plugin:1.9.10")
+    implementation("io.github.gradle-nexus:publish-plugin:1.3.0")
 }
 
 repositories {

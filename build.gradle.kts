@@ -1,5 +1,5 @@
 plugins {
-    kotlin("multiplatform") version "1.5.10"
+    kotlin("multiplatform") version "1.9.21"
     id("convention.publication")
 }
 
@@ -11,25 +11,29 @@ repositories {
 }
 
 kotlin {
-    ios()
+    jvmToolchain(11)
+
+    iosX64()
+    iosArm64()
+    iosSimulatorArm64()
     jvm {
         compilations.all {
             kotlinOptions {
-                jvmTarget = "1.8"
+                jvmTarget = "11"
             }
         }
     }
 
     sourceSets {
-        val commonMain by getting {
+        commonMain.configure {
             dependencies {
                 implementation(kotlin("stdlib"))
             }
         }
-        val jvmTest by getting {
+        jvmTest.configure {
             dependencies {
-                implementation("io.mockk:mockk:1.11.0")
-                implementation("junit:junit:4.12")
+                implementation("io.mockk:mockk:1.13.8")
+                implementation("junit:junit:4.13.2")
             }
         }
     }

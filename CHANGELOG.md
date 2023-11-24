@@ -1,5 +1,17 @@
 # Changelog
 
+## unreleased
+
+- Update kotlin to 1.9.21
+
+## 4.1.0
+
+- Add `minVersion` to requirement
+
+## 4.0.0
+
+- Publish as kotlin multiplatform library
+
 ## 3.1.0
 
 - Fix NPM loose comparisons (thanks @kmck)
