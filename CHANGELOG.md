@@ -2,6 +2,8 @@
 
 ## unreleased
 
+## 4.2.0
+
 - Update kotlin to 1.9.21
 - Update jvm target to 11
 
