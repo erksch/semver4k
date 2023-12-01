@@ -2,6 +2,8 @@
 
 ## unreleased
 
+- Add workaround for publishing issue
+
 ## 4.2.0
 
 - Update kotlin to 1.9.21

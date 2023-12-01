@@ -53,7 +53,7 @@ publishing {
     // Configure all publications
     publications.withType<MavenPublication> {
 
-        artifact(tasks.named<Jar>("javadocJar").get())
+        artifact(tasks.named<Jar>("javadocJar"))
 
         // Provide artifacts information requited by Maven Central
         pom {
@@ -99,4 +99,10 @@ if (signingPassword != null) {
         }
         sign(publishing.publications)
     }
+}
+
+// workaround for https://github.com/gradle/gradle/issues/26091 and https://github.com/gradle-nexus/publish-plugin/issues/208
+tasks.withType<PublishToMavenRepository>().configureEach {
+  val signingTasks = tasks.withType<Sign>()
+  mustRunAfter(signingTasks)
 }
