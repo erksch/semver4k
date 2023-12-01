@@ -19,14 +19,14 @@ Add the dependency to your project:
 <dependency>
   <groupId>de.voize</groupId>
   <artifactId>semver4k</artifactId>
-  <version>4.2.0</version>
+  <version>4.2.1</version>
 </dependency>
 ```
 
 #### Using gradle
 
 ```kotlin
-implementation("de.voize:semver4k:4.2.0")
+implementation("de.voize:semver4k:4.2.1")
 ```
 
 ## Usage

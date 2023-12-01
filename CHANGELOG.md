@@ -2,6 +2,8 @@
 
 ## unreleased
 
+## 4.2.1
+
 - Add workaround for publishing issue
 
 ## 4.2.0
