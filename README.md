@@ -7,6 +7,7 @@ This library is a fork of [semver4j](https://github.com/vdurmont/semver4j) compl
 Supported Kotlin Multiplatform targets:
 * jvm
 * ios
+* wasmJs
 * (Additional targets can be added as needed)
 
 ## Installation
