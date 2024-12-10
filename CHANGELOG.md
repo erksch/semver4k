@@ -2,6 +2,8 @@
 
 ## unreleased
 
+- Add wasmJs target
+
 ## 4.2.1
 
 - Add workaround for publishing issue

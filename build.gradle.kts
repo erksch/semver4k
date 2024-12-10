@@ -23,6 +23,9 @@ kotlin {
             }
         }
     }
+    wasmJs {
+        browser()
+    }
 
     sourceSets {
         commonMain.configure {
@@ -32,7 +35,7 @@ kotlin {
         }
         jvmTest.configure {
             dependencies {
-                implementation("io.mockk:mockk:1.13.8")
+                implementation("io.mockk:mockk:1.13.9")
                 implementation("junit:junit:4.13.2")
             }
         }
