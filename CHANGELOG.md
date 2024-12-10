@@ -2,6 +2,8 @@
 
 ## unreleased
 
+## 4.3.0
+
 - Add wasmJs target
 
 ## 4.2.1
